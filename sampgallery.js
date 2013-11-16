@@ -29,7 +29,7 @@
 									
 									$(lastItem).after('<div class="sampgallery-preview"><div class="sampgallery-preview-close"></div><a href="'+fullImg+'" target="_blank"><img src="'+fullImg+'" /></div>');
 									$(elem+' .sampgallery-preview-close').click(closePreview);
-									$('html, body').stop().animate({scrollTop: $(elem).find('.sampgallery-preview').offset().top}, 500);
+									$('html, body').stop().animate({scrollTop: ($(elem).find('.sampgallery-preview').offset().top-($(item).height()/2))}, 500);
 								return false;
 							}
 		
