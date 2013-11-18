@@ -1,5 +1,44 @@
 
 /*Samp Gallery*/
+.sampgallery-thumb{
+	display:inline-block;
+	position:relative;
+	text-align: center;
+	background-repeat:no-repeat;
+	background-position: center;
+	background-size: 100% auto;
+	overflow:hidden;
+	background-position:center;
+	background-size: 100% auto;
+	background-repeat:no-repeat;
+	outline:0.125em solid #fff;
+	outline-offset:-0.125em;
+}
+
+.sampgallery-thumb.sampgallery-active{
+ outline:0.125em solid #000;
+ 
+}
+
+.sampgallery-thumb.sampgallery-active:after{
+	position:absolute;
+	left:20%;
+	bottom:0;
+	content:'';
+	width:0;
+	height:0;
+	border-style:solid;
+	border-width: 0 1em 1em 1em;
+	border-color: transparent transparent #000 transparent;
+}
+
+
+.sampgallery-thumb img{
+	margin: auto;
+	width: auto;
+	height: 100%;
+}
+
 .sampgallery-preview{
 font-size:12px;
 width:95%;
@@ -14,6 +53,7 @@ overflow:hidden;
 -webkit-border-radius: 0.25em;
 -moz-border-radius: 0.25em;
 border-radius: 0.25em;
+overflow:hidden;
 background: #130035; /* Old browsers */
 background: -moz-radial-gradient(center, ellipse cover,  #130035 48%, #000000 100%); /* FF3.6+ */
 background: -webkit-gradient(radial, center center, 0px, center center, 100%, color-stop(48%,#130035), color-stop(100%,#000000)); /* Chrome,Safari4+ */

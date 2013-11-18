@@ -5,13 +5,13 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge,IE=9,IE=8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="author" content="The Samp - Sampo Asikainen">
-    <title>sampSlider</title>
+    <title>sampGallery</title>
     <link type="text/css" rel="stylesheet" media="all" href="style.css" />
     <style type="text/css">
     #gallery-container{
 			width:800px;
 		}
-		.box{
+		.sampgallery-thumb{
 			display:block;
 			width:200px;
 			height:200px;
@@ -24,16 +24,17 @@
   <div id="gallery-container">	
 
     <div class="samp-gallery">
-      <a class="box" style="background-image:url(pictures/1.jpg);" href="pictures/1.jpg" target="_blank" data-fullsize="pictures/full-size/1.jpg"></a>
-      <a class="box" style="background-image:url(pictures/10.jpg);" href="pictures/10.jpg" target="_blank" data-fullsize="pictures/full-size/10.jpg"></a>
-      <a class="box" style="background-image:url(pictures/2.jpg);" href="pictures/2.jpg" target="_blank" data-fullsize="pictures/full-size/2.jpg"></a>
-      <a class="box" style="background-image:url(pictures/3.jpg);" href="pictures/3.jpg" target="_blank" data-fullsize="pictures/full-size/3.jpg"></a>
-      <a class="box" style="background-image:url(pictures/4.jpg);" href="pictures/4.jpg" target="_blank" data-fullsize="pictures/full-size/4.jpg"></a>
-      <a class="box" style="background-image:url(pictures/5.jpg);" href="pictures/5.jpg" target="_blank" data-fullsize="pictures/full-size/5.jpg"></a>
-      <a class="box" style="background-image:url(pictures/6.jpg);" href="pictures/6.jpg" target="_blank" data-fullsize="pictures/full-size/6.jpg"></a>
-      <a class="box" style="background-image:url(pictures/7.jpg);" href="pictures/7.jpg" target="_blank" data-fullsize="pictures/full-size/7.jpg"></a>
-      <a class="box" style="background-image:url(pictures/8.jpg);" href="pictures/8.jpg" target="_blank" data-fullsize="pictures/full-size/8.jpg"></a>
-      <a class="box" style="background-image:url(pictures/9.jpg);" href="pictures/9.jpg" target="_blank" data-fullsize="pictures/full-size/9.jpg"></a>
+<a class="sampgallery-thumb" href="pictures/full-size/1.jpg" target="_blank" data-fullsize="pictures/full-size/1.jpg" data-thumb="pictures/1.jpg"><img src="pictures/1.jpg" /></a>
+<a class="sampgallery-thumb" href="pictures/full-size/10.jpg" target="_blank" data-fullsize="pictures/full-size/10.jpg" data-thumb="pictures/10.jpg"><img src="pictures/10.jpg" /></a>
+<a class="sampgallery-thumb" href="pictures/full-size/2.jpg" target="_blank" data-fullsize="pictures/full-size/2.jpg" data-thumb="pictures/2.jpg"><img src="pictures/2.jpg" /></a>
+<a class="sampgallery-thumb" href="pictures/full-size/3.jpg" target="_blank" data-fullsize="pictures/full-size/3.jpg" data-thumb="pictures/3.jpg"><img src="pictures/3.jpg" /></a>
+<a class="sampgallery-thumb" href="pictures/full-size/4.jpg" target="_blank" data-fullsize="pictures/full-size/4.jpg" data-thumb="pictures/4.jpg"><img src="pictures/4.jpg" /></a>
+<a class="sampgallery-thumb" href="pictures/full-size/5.jpg" target="_blank" data-fullsize="pictures/full-size/5.jpg" data-thumb="pictures/5.jpg"><img src="pictures/5.jpg" /></a>
+<a class="sampgallery-thumb" href="pictures/full-size/6.jpg" target="_blank" data-fullsize="pictures/full-size/6.jpg" data-thumb="pictures/6.jpg"><img src="pictures/6.jpg" /></a>
+<a class="sampgallery-thumb" href="pictures/full-size/7.jpg" target="_blank" data-fullsize="pictures/full-size/7.jpg" data-thumb="pictures/7.jpg"><img src="pictures/7.jpg" /></a>
+<a class="sampgallery-thumb" href="pictures/full-size/8.jpg" target="_blank" data-fullsize="pictures/full-size/8.jpg" data-thumb="pictures/8.jpg"><img src="pictures/8.jpg" /></a>
+<a class="sampgallery-thumb" href="pictures/full-size/9.jpg" target="_blank" data-fullsize="pictures/full-size/9.jpg" data-thumb="pictures/9.jpg"><img src="pictures/9.jpg" /></a>
+		
     </div>
 
   </div>
@@ -41,7 +42,7 @@
 	<script type="text/javascript" src="sampgallery.js"></script>
 	<script type="text/javascript">
   
-    var slida = jQuery('.samp-gallery').sampGallery();
+    jQuery('.samp-gallery').sampGallery();
   
   </script>
 </body>
