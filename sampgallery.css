@@ -11,19 +11,17 @@
 	background-size: 100% auto;
 	background-repeat:no-repeat;
     border:0.125em solid #fff;
-	/*outline:0.125em solid #fff;
-	outline-offset:-0.125em;*/
     -webkit-box-sizing: border-box;
     -moz-box-sizing: border-box;
     box-sizing: border-box;
 }
 .sampgallery-thumb.sampgallery-active{
-    border:0.125em solid #333;
+    overflow: visible;
  }
 .sampgallery-thumb.sampgallery-active:after{
 	position:absolute;
 	left:20%;
-	bottom:0;
+	bottom:-0.125em;
 	content:'';
 	width:0;
 	height:0;
@@ -39,25 +37,31 @@
 
 .sampgallery-preview{
     font-size:12px;
-    width:95%;
-    min-height:300px;
+    width:100%;
+    /*min-height:300px;*/
+    height:0px;
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
     clear:both;
     float:left;
     position:relative;
-    background-color:#333;
     text-align:center;
     padding:2.5%;
     overflow:hidden;
-    -webkit-border-radius: 0.25em;
-    -moz-border-radius: 0.25em;
-    border-radius: 0.25em;
-    overflow:hidden;
     background-color: #333333;
 }
+.sampgallery-preview.sampgallery-loading{
+    background-image: url(imgs/ajax-loader.gif);
+    background-position: center center;
+    background-repeat: no-repeat;
+}
+
 .sampgallery-preview img{
-	width:80%;
-	height:auto;
-	margin:auto;
+    width: auto;
+    height : auto;
+    max-height: 100%;
+    max-width: 100%;
 }
 
 .sampgallery-preview-close{

@@ -5,75 +5,111 @@
 		
 		_sampGallery = function(elem){		
 
-			var _self = this, curOffset = 0;
+			var _self = this,  _curItemOffset = {top:-1, left:-1};//store current thumb offset
+
+            function realImgDimension(img) {
+                var i = new Image();
+                i.src = img.src;
+                return {
+                    naturalWidth: i.width,
+                    naturalHeight: i.height
+                };
+            }
 
             function openPreview(_this){
                 var _thisOffset = $(_this).offset();
-                var _thisImg = $(_this).attr('href');
-                var fullImg = _thisImg;
-
-                if(typeof $(_this).attr('data-fullsize') !== 'undefined') fullImg = $(_this).attr('data-fullsize');
-
-                var _thisIndex = $(_this).index();
+                //var _thisIndex = $(_this).index();
                 var prevItem;
+                var curPreview = $(elem).find('.sampgallery-preview');
+                var _thisImg = new Image();
+                _thisImg.src = $(_this).attr('href');
 
-                $(elem+' .sampgallery-thumb').each(function(i, item){
-                    var itemOffset = $(item).offset();
-                    var lastOffset = $(elem+'').children().last().offset();
+                var myImage = _thisImg;
+                    myImage.addEventListener('load', function() {
+                        var realSize = realImgDimension(this);
+                        var previewDims = {'w':$(elem).width(),'h':$(window).height()-$(_this).height()};
+                        var maxDims = {'w':((previewDims.w-100)/previewDims.w)*100, 'h':100};
 
-                        if(itemOffset.top > _thisOffset.top || lastOffset.top == _thisOffset.top){
-                            var lastItem = prevItem;
+                            if(maxDims.w > realSize.naturalWidth) maxDims.w = (realSize.naturalWidth/maxDims.w)*100;
+                            if(maxDims.h > realSize.naturalHeight) maxDims.h = (maxDims.h/realSize.naturalHeight)*100;
 
-                                if(lastOffset.top == _thisOffset.top) lastItem = $(elem+'').children().last();
+                        var fullImgPath = _thisImg.src;
 
-                                $(lastItem).after('<div class="sampgallery-preview"><div class="sampgallery-preview-close"></div><a href="'+fullImg+'" target="_blank"><img src="'+fullImg+'" /></div>');
-                                $(elem).on('click', ' .sampgallery-preview-close', function(evt){
-                                    evt.preventDefault();
-                                    closePreview(null, null);}
-                                );
+                            if(typeof $(_this).attr('data-fullsize') !== 'undefined') fullImgPath = $(_this).attr('data-fullsize');
 
-                                if(settings.scrolltoitem ){
+                            $(elem+' .sampgallery-thumb').each(function(i, item){
+                                var itemOffset = $(item).offset();
+                                var lastOffset = $(elem).children().last().offset();
 
-                                    var tY = ($(elem).find('.sampgallery-preview').offset().top-($(item).height()/2))-settings.scrolloffset.top;
-                                        if(tY != curOffset){
-                                                $('html, body').stop().animate({scrollTop: tY}, settings.animationspeed, function(){
-                                                    curOffset = $(elem).find('.sampgallery-preview').offset().top;
-                                                });
-                                        }
-                                }else{
-                                    curOffset = $(elem).find('.sampgallery-preview').offset().top;
-                                }
+                                    if(itemOffset.top > _thisOffset.top || lastOffset.top == _thisOffset.top){
+                                        var lastItem = prevItem;
 
-                            return false;
-                        }
+                                            if(lastOffset.top == _thisOffset.top) lastItem = $(elem+'').children().last();
 
-                    prevItemOffset = itemOffset;
-                    prevItem = item;
-                });
+                                            if(_curItemOffset.top ==  _thisOffset.top && typeof curPreview != 'undefined' && curPreview.length > 0){
+
+                                                    curPreview.addClass('sampgallery-loading').find('a').attr('href', fullImgPath).find('img').attr('src', fullImgPath);
+                                                    curPreview.animate({'height':previewDims.h+'px'}, settings.animationspeed/2, function(){
+                                                        $(this).removeClass('sampgallery-loading');
+                                                    });
+
+                                                $(_this).addClass('sampgallery-active');
+
+                                            }else{
+
+                                                var oHtml = '<div class="sampgallery-preview sampgallery-loading"><div class="sampgallery-preview-close"></div><a href="'+fullImgPath+'" target="_blank"><img src="'+fullImgPath+'" style="max-width:'+maxDims.w+'%;max-height:'+maxDims.h+'%" /></a></div>';
+                                                    if(typeof curPreview != 'undefined' && curPreview.length > 0){
+                                                        closePreview(function(){
+                                                                $(lastItem).after(oHtml);
+                                                                $(_this).addClass('sampgallery-active');
+                                                                $(elem).find('.sampgallery-preview').animate({'height':previewDims.h+'px'}, settings.animationspeed/2, function(){
+                                                                    $(this).removeClass('sampgallery-loading');
+                                                                });
+                                                        }, null);
+                                                    }else{
+                                                            $(lastItem).after(oHtml);
+                                                            $(_this).addClass('sampgallery-active');
+                                                            $(elem).find('.sampgallery-preview').animate({'height':previewDims.h+'px'}, settings.animationspeed/2, function(){
+                                                                $(this).removeClass('sampgallery-loading');
+                                                            });
+                                                    }
+                                            }
+
+                                            $(elem).on('click', ' .sampgallery-preview-close', function(evt){
+                                                evt.preventDefault();
+                                                closePreview(null, null);
+                                            });
+
+                                            if(settings.scrolltoitem ){
+                                                      $('html, body').stop().animate({scrollTop: _thisOffset.top-settings.scrolloffset.top+'px'}, settings.animationspeed);
+                                            }
+
+                                        return false;
+                                    }
+
+                                prevItem = item;
+                            });
+
+                        _curItemOffset = _thisOffset;
+                    });
+                myImage = null;
             }
+
 
             function closePreview(callback, args){
 
                 var thisPreview = $(elem).find('.sampgallery-preview');
+                var thisItem = $(elem).find('.sampgallery-thumb.sampgallery-active');
+                    if(typeof thisItem.offset() != 'undefined') _curItemOffset = thisItem.offset().top-thisPreview.offset().top;
 
                     if(thisPreview.length > 0){
 
-                            if(settings.scrolltoitem){
-                                    $('html, body').stop().animate({scrollTop: -($(elem).children().first().height())-settings.scrolloffset.top}, settings.animationspeed/2, function(){});
-                            }
-                            //console.log(thisPreview.offset().top +'!='+ curOffset);
-                            if(thisPreview.offset().top != curOffset){
-
-                                    thisPreview.stop().animate({'height':'0','opacity':'0'}, settings.animationspeed/2, function(){
-                                        curOffset = thisPreview.offset().top;
-                                            thisPreview.remove();
-                                            if(typeof callback === "function") callback(args);
-                                    });
-                            }else{
-                                curOffset = thisPreview.offset().top;
-                                    thisPreview.remove();
+                            thisPreview.stop().animate({'height':'0px'}, settings.animationspeed/2, function(){
+                                    thisPreview.remove();//,'opacity':'0'
                                     if(typeof callback === "function") callback(args);
-                            }
+                            });
+
+                            $(elem+' .sampgallery-thumb').removeClass('sampgallery-active');
                     }
             }
 
@@ -81,17 +117,11 @@
 					evt.preventDefault();
 
                         if($(evt.target).hasClass('sampgallery-active')){
-                                $(elem+' .sampgallery-thumb').removeClass('sampgallery-active');
 							closePreview(null, null);
                             return false;
 						}else{
                                 $(elem+' .sampgallery-thumb').removeClass('sampgallery-active');
-                                if($(elem).find('.sampgallery-preview').length > 0){
-                                    closePreview(openPreview, this);
-                                }else{
-                                    openPreview(this);
-                                }
-                            $(evt.target).addClass('sampgallery-active');
+                            openPreview(this);
                         }
 				});
 			settings.afterinit();
