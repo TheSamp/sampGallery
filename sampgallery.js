@@ -17,8 +17,7 @@
             }
 
             function openPreview(_this){
-                var _thisOffset = $(_this).offset();
-                //var _thisIndex = $(_this).index();
+                var _thisOffset = $(_this).offset();//var _thisIndex = $(_this).index();
                 var prevItem;
                 var curPreview = $(elem).find('.sampgallery-preview');
                 var _thisImg = new Image();
@@ -28,12 +27,16 @@
                     myImage.addEventListener('load', function() {
                         var realSize = realImgDimension(this);
                         var previewDims = {'w':$(elem).width(),'h':$(window).height()-$(_this).height()};
-                        var maxDims = {'w':((previewDims.w-100)/previewDims.w)*100, 'h':100};
+                        var aratio = (previewDims.h/realSize.naturalHeight);
+                        var maxPcs = {'w':(previewDims.w-80)/previewDims.w, 'h':1};//image max sixes//-80 for icons left and right side. Fix later just to right side
+                        var newDims = {'w':previewDims.w, 'h':previewDims.h};
 
-                            if(maxDims.w > realSize.naturalWidth) maxDims.w = (realSize.naturalWidth/maxDims.w)*100;
-                            if(maxDims.h > realSize.naturalHeight) maxDims.h = (maxDims.h/realSize.naturalHeight)*100;
+                            if(aratio < 1 && (realSize.naturalWidth > realSize.naturalHeight)){
+                                newDims.h = previewDims.h*aratio;
+                            }
 
                         var fullImgPath = _thisImg.src;
+                        var toHeight = newDims.h+'px';
 
                             if(typeof $(_this).attr('data-fullsize') !== 'undefined') fullImgPath = $(_this).attr('data-fullsize');
 
@@ -49,7 +52,7 @@
                                             if(_curItemOffset.top ==  _thisOffset.top && typeof curPreview != 'undefined' && curPreview.length > 0){
 
                                                     curPreview.addClass('sampgallery-loading').find('a').attr('href', fullImgPath).find('img').attr('src', fullImgPath);
-                                                    curPreview.animate({'height':previewDims.h+'px'}, settings.animationspeed/2, function(){
+                                                    curPreview.animate({'height':toHeight}, settings.animationspeed/2, function(){
                                                         $(this).removeClass('sampgallery-loading');
                                                     });
 
@@ -57,20 +60,20 @@
 
                                             }else{
 
-                                                var oHtml = '<div class="sampgallery-preview sampgallery-loading"><div class="sampgallery-preview-close"></div><a href="'+fullImgPath+'" target="_blank"><img src="'+fullImgPath+'" style="max-width:'+maxDims.w+'%;max-height:'+maxDims.h+'%" /></a></div>';
+                                                var oHtml = '<div class="sampgallery-preview sampgallery-loading"><div class="sampgallery-preview-close"></div><a href="'+fullImgPath+'" target="_blank"><img src="'+fullImgPath+'" style="max-width:'+(maxPcs.w*100)+'%;max-height:'+(maxPcs.h*100)+'%" /></a></div>';
                                                     if(typeof curPreview != 'undefined' && curPreview.length > 0){
                                                         closePreview(function(){
                                                                 $(lastItem).after(oHtml);
                                                                 $(_this).addClass('sampgallery-active');
-                                                                $(elem).find('.sampgallery-preview').animate({'height':previewDims.h+'px'}, settings.animationspeed/2, function(){
-                                                                    $(this).removeClass('sampgallery-loading');
+                                                                $(elem).find('.sampgallery-preview').animate({'height':toHeight}, settings.animationspeed/2, function(){
+                                                                        $(this).removeClass('sampgallery-loading');
                                                                 });
                                                         }, null);
                                                     }else{
                                                             $(lastItem).after(oHtml);
                                                             $(_this).addClass('sampgallery-active');
-                                                            $(elem).find('.sampgallery-preview').animate({'height':previewDims.h+'px'}, settings.animationspeed/2, function(){
-                                                                $(this).removeClass('sampgallery-loading');
+                                                            $(elem).find('.sampgallery-preview').animate({'height':toHeight}, settings.animationspeed/2, function(){
+                                                                    $(this).removeClass('sampgallery-loading');
                                                             });
                                                     }
                                             }
