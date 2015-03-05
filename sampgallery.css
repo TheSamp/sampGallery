@@ -20,8 +20,9 @@
  }
 .sampgallery-thumb.sampgallery-active:after{
 	position:absolute;
-	left:20%;
+	left:50%;
 	bottom:-0.125em;
+    margin-left:-1em;
 	content:'';
 	width:0;
 	height:0;

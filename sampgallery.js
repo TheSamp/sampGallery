@@ -30,7 +30,7 @@
                     _thisImg.addEventListener('load', function() {
 
                         var realSize = realImgDimension(this);
-                        var previewDims = {'w':$(elem).width(),'h':$(window).height()-$(_this).height()};
+                        var previewDims = {'w':$(elem).width(),'h':$(window).height()-$(_this).height()-settings.scrolloffset.top};
                         var aratio = (previewDims.h/realSize.naturalHeight);
                         var maxPcs = {'w':(previewDims.w-80)/previewDims.w, 'h':1};//image max sixes//-80 for icons left and right side. Fix later just to right side
                         var newDims = {'w':previewDims.w, 'h':previewDims.h};
@@ -118,7 +118,7 @@
 
 					evt.preventDefault();
 
-                        if($(evt.target).hasClass('sampgallery-active')){
+                        if($(this).hasClass('sampgallery-active')){
 							closePreview(null, null);
                             return false;
 						}else{
