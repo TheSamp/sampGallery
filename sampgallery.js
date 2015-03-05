@@ -18,6 +18,7 @@
 
             function openPreview(_this){
                 //var cTotal = $(elem+' .sampgallery-thumb').length;//var _thisIndex = $(_this).index();
+                $(_this).addClass('sampgallery-loading');
                 var _thisOffset = $(_this).offset();
                 var prevItem = $(elem).children().first();
                 var cLast = $(elem+' .sampgallery-thumb').last();
@@ -56,29 +57,29 @@
 
                                             if((_curItemOffset.top === _thisOffset.top) && typeof curPreview != 'undefined' && curPreview.length > 0){
 
-                                                    curPreview.addClass('sampgallery-loading').find('a').attr('href', fullImgPath).find('img').attr('src', fullImgPath);
+                                                    curPreview.find('a').attr('href', fullImgPath).find('img').attr('src', fullImgPath);
                                                     curPreview.animate({'height':toHeight}, settings.animationspeed/2, function(){
-                                                        $(this).removeClass('sampgallery-loading');
+                                                            $(elem+' .sampgallery-thumb').removeClass('sampgallery-loading');
+                                                            $(_this).addClass('sampgallery-active');
                                                     });
-
-                                                $(_this).addClass('sampgallery-active');
 
                                             }else{
 
-                                                var oHtml = '<div class="sampgallery-preview sampgallery-loading"><div class="sampgallery-preview-close"></div><a href="'+fullImgPath+'" target="_blank"><img src="'+fullImgPath+'" style="max-width:'+(maxPcs.w*100)+'%;max-height:'+(maxPcs.h*100)+'%" /></a></div>';
+                                                var oHtml = '<div class="sampgallery-preview"><div class="sampgallery-preview-close"></div><a href="'+fullImgPath+'" target="_blank"><img src="'+fullImgPath+'" style="max-width:'+(maxPcs.w*100)+'%;max-height:'+(maxPcs.h*100)+'%" /></a></div>';
                                                     if(typeof curPreview != 'undefined' && curPreview.length > 0){
                                                         closePreview(function(){
                                                                 $(lastItem).after(oHtml);
-                                                                $(_this).addClass('sampgallery-active');
                                                                 $(elem).find('.sampgallery-preview').animate({'height':toHeight}, settings.animationspeed/2, function(){
-                                                                        $(this).removeClass('sampgallery-loading');
+                                                                        $(elem+' .sampgallery-thumb').removeClass('sampgallery-loading');
+                                                                        $(_this).addClass('sampgallery-active');
                                                                 });
                                                         }, null);
                                                     }else{
                                                             $(lastItem).after(oHtml);
-                                                            $(_this).addClass('sampgallery-active');
+
                                                             $(elem).find('.sampgallery-preview').animate({'height':toHeight}, settings.animationspeed/2, function(){
-                                                                    $(this).removeClass('sampgallery-loading');
+                                                                    $(elem+' .sampgallery-thumb').removeClass('sampgallery-loading');
+                                                                    $(_this).addClass('sampgallery-active');
                                                             });
                                                     }
                                             }
@@ -105,7 +106,7 @@
                     if(thisPreview.length > 0){
 
                             thisPreview.stop().animate({'height':'0px'}, settings.animationspeed/2, function(){
-                                    thisPreview.remove();//,'opacity':'0'
+                                    thisPreview.remove();
                                     if(typeof callback === "function") callback(args);
                             });
 
