@@ -55,7 +55,6 @@
     background-image: url(imgs/ajax-loader.gif);
     background-position: center center;
     background-repeat: no-repeat;
-
 }
 .sampgallery-preview.sampgallery-loading img{
                        opacity: 0.25;
