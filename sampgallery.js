@@ -5,19 +5,32 @@
 		
 		_sampGallery = function(elem){		
 
-			var _self = this,  _curItemOffset = {top:-1, left:-1};//store current thumb offset
+			var _self = this,  _curItemOffset = {top:-1, left:-1}, _curThbDims = {'w':0,'h':0}, _curImgDims = {'w':0,'h':0}, _curPreviewDims = {'w':0,'h':0};//store current thumb offset
 
             function realImgDimension(img) {
                 var i = new Image();
                 i.src = img.src;
                 return {
-                    naturalWidth: i.width,
-                    naturalHeight: i.height
+                    w: i.width,
+                    h: i.height
                 };
+            }
+            
+            function buildControls(url){
+                    if($(elem).find('.sampgallery-ctrls').length > 0) $(elem).find('.sampgallery-ctrls').remove();
+                var cHtml = '<div class="sampgallery-ctrls">';
+                cHtml += '<a class="sampgallery-ctrl sampgallery-ctrl-close"></a>';
+                cHtml += '<a class="sampgallery-ctrl sampgallery-ctrl-zoomin"></a>';
+                cHtml += '<a class="sampgallery-ctrl sampgallery-ctrl-zoomout"></a>';
+                cHtml += '<a class="sampgallery-ctrl sampgallery-ctrl-openimage" href="'+url+'" target="_blank"></a>';
+                cHtml += '</div>';
+                return cHtml;
             }
 
             function openPreview(_this){
                 //var cTotal = $(elem+' .sampgallery-thumb').length;//var _thisIndex = $(_this).index();
+                _curThbDims.w = $(_this).outerWidth();
+                _curThbDims.h = $(_this).outerHeight();
                 $(_this).addClass('sampgallery-loading');
                 var _thisOffset = $(_this).offset();
                 var prevItem = $(elem).children().first();
@@ -29,18 +42,8 @@
 
                     _thisImg.addEventListener('load', function() {
 
-                        var realSize = realImgDimension(this);
-                        var previewDims = {'w':$(elem).width(),'h':$(window).height()-$(_this).height()-settings.scrolloffset.top};
-                        var aratio = (previewDims.h/realSize.naturalHeight);
-                        var maxPcs = {'w':(previewDims.w-80)/previewDims.w, 'h':1};//image max sixes//-80 for icons left and right side. Fix later just to right side
-                        var newDims = {'w':previewDims.w, 'h':previewDims.h};
-
-                            /*if(aratio < 1 && (realSize.naturalWidth > realSize.naturalHeight)){
-                                newDims.h = previewDims.h*aratio;
-                            }*/
-
+                        _curImgDims = realImgDimension(this);
                         var fullImgPath = this.src;
-                        var toHeight = newDims.h+'px';
 
                             if(typeof $(_this).attr('data-fullsize') !== 'undefined') fullImgPath = $(_this).attr('data-fullsize');
 
@@ -57,30 +60,28 @@
 
                                             if((_curItemOffset.top === _thisOffset.top) && typeof curPreview != 'undefined' && curPreview.length > 0){
 
-                                                    curPreview.find('a').attr('href', fullImgPath).find('img').attr('src', fullImgPath);
-                                                    curPreview.animate({'height':toHeight}, settings.animationspeed/2, function(){
-                                                            $(elem+' .sampgallery-thumb').removeClass('sampgallery-loading');
-                                                            $(_this).addClass('sampgallery-active');
-                                                    });
+                                                    curPreview.prepend(buildControls(fullImgPath)).find('a').attr('href', fullImgPath).find('img').attr('src', fullImgPath);
+                                                previewFit(function(){
+                                                        $(_this).addClass('sampgallery-active');
+                                                }, null);
 
                                             }else{
 
-                                                var oHtml = '<div class="sampgallery-preview"><div class="sampgallery-preview-close"></div><a href="'+fullImgPath+'" target="_blank"><img src="'+fullImgPath+'" style="max-width:'+(maxPcs.w*100)+'%;max-height:'+(maxPcs.h*100)+'%" /></a></div>';
+                                                var oHtml = '<div class="sampgallery-preview">'+buildControls(fullImgPath)+'<a href="'+fullImgPath+'" target="_blank"><img src="'+fullImgPath+'"></a></div>';
                                                     if(typeof curPreview != 'undefined' && curPreview.length > 0){
                                                         closePreview(function(){
                                                                 $(lastItem).after(oHtml);
-                                                                $(elem).find('.sampgallery-preview').animate({'height':toHeight}, settings.animationspeed/2, function(){
-                                                                        $(elem+' .sampgallery-thumb').removeClass('sampgallery-loading');
-                                                                        $(_this).addClass('sampgallery-active');
-                                                                });
+                                                            previewFit(function(){
+                                                                    $(elem+' .sampgallery-thumb').removeClass('sampgallery-loading');
+                                                                    $(_this).addClass('sampgallery-active');
+                                                            }, null);
                                                         }, null);
                                                     }else{
                                                             $(lastItem).after(oHtml);
-
-                                                            $(elem).find('.sampgallery-preview').animate({'height':toHeight}, settings.animationspeed/2, function(){
-                                                                    $(elem+' .sampgallery-thumb').removeClass('sampgallery-loading');
-                                                                    $(_this).addClass('sampgallery-active');
-                                                            });
+                                                        previewFit(function(){
+                                                            $(elem+' .sampgallery-thumb').removeClass('sampgallery-loading');
+                                                            $(_this).addClass('sampgallery-active');
+                                                        }, null);
                                                     }
                                             }
 
@@ -107,7 +108,7 @@
 
                             thisPreview.stop().animate({'height':'0px'}, settings.animationspeed/2, function(){
                                     thisPreview.remove();
-                                    if(typeof callback === "function") callback(args);
+                                    if(typeof callback === 'function') callback(args);
                             });
 
                             $(elem+' .sampgallery-thumb').removeClass('sampgallery-active');
@@ -127,12 +128,69 @@
                         }
 				});
 
-                $(elem).on('click', '.sampgallery-preview-close', function(evt){
+                $(elem).on('click', '.sampgallery-ctrl-close', function(evt){
                     evt.preventDefault();
                     closePreview(null, null);
                 });
+
+                function previewFit(cb,args){
+                    var previewDims = {'w':$(elem).outerWidth(),'h':$(window).height()-_curThbDims.h-settings.scrolloffset.top-settings.scrolloffset.bottom};
+                    _curPreviewDims = previewDims;
+                    var toHeight = previewDims.h;
+                    var prv = $(elem).find('.sampgallery-preview');
+                        //prv.find('a > img').attr('style', 'max-width:'+(maxPcs.w*100)+'%;max-height:'+(maxPcs.h*100)+'%');
+                        prv.animate({'height':toHeight}, settings.animationspeed/2, function(){
+                                $(elem+' .sampgallery-thumb').removeClass('sampgallery-loading');
+                                if(typeof cb === 'function') cb(args);
+                        });
+                }
+
+                function previewZoomin(cb,args){
+                    var prv = $(elem).find('.sampgallery-preview');
+                    var prvImg = prv.find('a > img');
+                    var scaledDims = {'w': prvImg.width(),'h':prvImg.height()};
+                    var zD = scaledDims;
+                        //prv.find('a > img').removeAttr('style');
+                    var isHorizontal = true;
+                    var rat = _curPreviewDims.w/scaledDims.w;
+                    var pads = prv.css('padding');//+prv.css('padding-bottom');
+                    pads = pads.replace('px','');
+
+                        if(_curImgDims.w <= _curImgDims.h) isHorizontal = false;
+
+                        if(!isHorizontal){
+                            zD.h = _curImgDims.h;
+                        }else{
+                            zD.h = Math.round(scaledDims.h*rat);
+                        }
+
+                    zD.h = zD.h+parseInt(pads*2);
+
+                        prv.animate({'height':zD.h}, settings.animationspeed/2, function(){
+                                if(typeof cb === 'function') cb(args);
+                        });
+                }
+
+                $(elem).on('click', '.sampgallery-ctrl-zoomin', function(evt){
+                    evt.preventDefault();
+                    var zi = $(this);
+                    previewZoomin(function(){
+                            $(elem).find('.sampgallery-ctrls .sampgallery-ctrl').css('display','block');
+                            zi.hide();
+                    }, null);
+                });
+
+                $(elem).on('click', '.sampgallery-ctrl-zoomout', function(evt){
+                    evt.preventDefault();
+                    var zo = $(this);
+                    previewFit(function(){
+                            $(elem).find('.sampgallery-ctrls .sampgallery-ctrl').css('display','block');
+                            zo.hide();
+                    }, null);
+                });
+
 			settings.afterinit();
-            return _self;
+            //return _self;
 		}
 		
 		function _setupSampGallery(elem){
@@ -166,7 +224,7 @@
 		jQuery.fn.sampGallery = function(options){			
 			settings = jQuery.extend({
 				scrolltoitem: true,//Scroll page to preview
-				scrolloffset: {top:0},//if needed to add top offset example fixed header
+				scrolloffset: {top:0, bottom:0},//if needed to add top offset example fixed header
 				animationspeed: 1000,
 				thumbscaled: true,//use thumbs as background-images
 				afterinit: function(){
