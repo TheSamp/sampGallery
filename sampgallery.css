@@ -1,19 +1,26 @@
-/*Samp Gallery*/
+.sampgallery{
+    /*font-size: 0;removes margin between inline-blocks*/
+    overflow: hidden;
+    min-height: 100%;
+    clear: both;
+    float:none;
+    display:none;
+}
 .sampgallery-thumb{
-	display:inline-block;
+    display: block;
+    float: left;
 	position:relative;
 	text-align: center;
-	background-repeat:no-repeat;
-	background-position: center;
-	background-size: 100% auto;
 	overflow:hidden;
 	background-position:center;
 	background-size: 100% auto;
 	background-repeat:no-repeat;
-    border:0.125em solid #fff;
     -webkit-box-sizing: border-box;
     -moz-box-sizing: border-box;
     box-sizing: border-box;
+}
+.sampgallery-thumb.sampgallery-thumb-intro{
+    opacity:0;
 }
 .sampgallery-thumb.sampgallery-active{
     overflow: visible;
@@ -21,19 +28,22 @@
 .sampgallery-thumb.sampgallery-active:after{
 	position:absolute;
 	left:50%;
-	bottom:-0.125em;
-    margin-left:-1em;
+	bottom: 0;
+    margin-left: -5px;
 	content:'';
 	width:0;
 	height:0;
 	border-style:solid;
-	border-width: 0 1em 1em 1em;
+	border-width: 0 10px 10px 10px;
 	border-color: transparent transparent #333 transparent;
 }
 .sampgallery-thumb img{
 	margin: auto;
 	width: auto;
 	height: 100%;
+}
+.sampgallery-thumb.sampgallery-loading{
+    opacity: 0.85;
 }
 .sampgallery-thumb.sampgallery-loading:after{
     width:100%;
@@ -49,9 +59,6 @@
     background-position: center center;
     background-repeat: no-repeat;
     background-size: 60% auto;
-}
-.sampgallery-thumb.sampgallery-loading{
-    opacity: 0.8;
 }
 
 .sampgallery-preview{
@@ -79,11 +86,11 @@
     position:absolute;
     right:0;
     top:0;
-    width:4em;
+    width:40px;
     background-color: rgba(125,125,125, 0.5);
 }
 .sampgallery-ctrl{
-    height:4em;
+    height:40px;
     font-size:inherit;
     color: #fff;
     display:block;
@@ -98,11 +105,12 @@
 }
 .sampgallery-ctrl-zoomin{
     background-position: center 22.2%;
+    display: none;
 }
 .sampgallery-ctrl-zoomout{
-        background-position: center 11.1%;
+    background-position: center 11.1%;
     display: none;
 }
 .sampgallery-ctrl-openimage{
-     background-position: center 44.4%;
- }
+    background-position: center 44.4%;
+}
