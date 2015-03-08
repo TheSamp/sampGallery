@@ -1,7 +1,7 @@
-	/*Known issues: Will not work properly with jQuery versions (below 1.8) that don'thandle box-sizing correctly*/
-    (function($){
+/*Known issues: Will not work properly with jQuery versions (below 1.8) that don'thandle box-sizing correctly*/
+(function($){
 	
-		var settings = {};
+	var settings = {};
 		
 		_sampGallery = function(elem){		
 
@@ -16,10 +16,12 @@
                 };
             }
 
-            function doScroll(itemOffset){
-                if(settings.scrolltoitem ){
-                    jQuery('html, body').stop().animate({scrollTop: itemOffset.top-settings.scrolloffset.top+'px'}, settings.animationspeed);
-                }
+            function doScroll(item){
+                var itemOffset = jQuery(item).offset();
+                    if(settings.scrolltoitem ){
+                            jQuery('html, body').stop().animate({scrollTop: itemOffset.top-settings.scrolloffset.top+'px'}, settings.animationspeed);
+                        _curItemOffset = itemOffset;
+                    }
             }
             
             function buildControls(url){
@@ -69,7 +71,7 @@
                                                     curPreview.prepend(buildControls(fullImgPath)).find('a').attr('href', fullImgPath).find('img').attr('src', fullImgPath);
                                                 previewFit(function(){
                                                         jQuery(_this).addClass('sampgallery-active');
-                                                    doScroll(_thisOffset);
+                                                    doScroll(_this);
                                                 }, null);
 
                                             }else{
@@ -81,7 +83,7 @@
                                                             previewFit(function(){
                                                                     jQuery(elem+' .sampgallery-thumb').removeClass('sampgallery-loading');
                                                                     jQuery(_this).addClass('sampgallery-active');
-                                                                doScroll(_thisOffset);
+                                                                doScroll(_this);
                                                             }, null);
                                                         }, null);
                                                     }else{
@@ -89,7 +91,7 @@
                                                         previewFit(function(){
                                                                 jQuery(elem+' .sampgallery-thumb').removeClass('sampgallery-loading');
                                                                 jQuery(_this).addClass('sampgallery-active');
-                                                            doScroll(_thisOffset);
+                                                            doScroll(_this);
                                                         }, null);
                                                     }
                                             }
@@ -112,7 +114,7 @@
 
                     if(thisPreview.length > 0){
 
-                            thisPreview.stop().animate({'height':'0px'}, settings.animationspeed/2, function(){
+                            thisPreview.stop().animate({'height':'0px'}, settings.animationspeed, function(){
                                     thisPreview.remove();
                                     if(typeof callback === 'function') callback(args);
                             });
@@ -152,7 +154,7 @@
                             prv.find('.sampgallery-ctrls .sampgallery-ctrl-zoomin').css('display','block');
                         }
                         //prv.find('a > img').attr('style', 'max-width:'+(maxPcs.w*100)+'%;max-height:'+(maxPcs.h*100)+'%');
-                        prv.animate({'height':toHeight}, settings.animationspeed/2, function(){
+                        prv.animate({'height':toHeight}, settings.animationspeed, function(){
                                 jQuery(elem+' .sampgallery-thumb').removeClass('sampgallery-loading');
                                 if(typeof cb === 'function') cb(args);
                         });
@@ -182,9 +184,11 @@
                                 }
 
                             zD.h = (scaledDims.h*rat);
+                        }else if(_curImgDims.w == _curImgDims.h){
+                            console.log('were fucked');
                         }
 
-                        prv.animate({'height':zD.h}, settings.animationspeed/2, function(){
+                        prv.animate({'height':zD.h}, settings.animationspeed, function(){
                                 if(typeof cb === 'function') cb(args);
                         });
                 }
@@ -217,12 +221,12 @@
                             resizeTimer = setTimeout(function() {
                                 _curElemDims = {'w':jQuery(elem).outerWidth(),'h':jQuery(elem).outerHeight()};
                                     jQuery(elem).find('.sampgallery-preview').remove();
-                                    jQuery(elem).find('.sampgallery-thumb').attr('class', 'sampgallery-thumb');
+                                    jQuery(elem).find('.sampgallery-thumb').removeClass('sampgallery-loading sampgallery-active');
                             }, 250);
                         }
                 });
 
-			settings.afterinit();
+			    if(typeof settings.afterinit === 'function') settings.afterinit();
             //return _self;
 		}
 		
@@ -241,9 +245,11 @@
 					*/
 
                         if(settings.showintro){
-                            jQuery(item).addClass('sampgallery-thumb sampgallery-thumb-intro').delay(i*250).animate({'opacity':1});
+                                jQuery(item).addClass('sampgallery-thumb sampgallery-thumb-intro').delay(i*250).animate({'opacity':1}, settings.animationspeed, function(){
+                                         jQuery(item).removeClass('sampgallery-thumb-intro');
+                                });
                         }else{
-                            jQuery(item).addClass('sampgallery-thumb');
+                                jQuery(item).addClass('sampgallery-thumb');
                         }
 
 					var t_img = jQuery(item).attr('src');
@@ -263,11 +269,11 @@
 		jQuery.fn.sampGallery = function(options){			
 			settings = jQuery.extend({
 				scrolltoitem: true,//Scroll page to preview
-				scrolloffset: {top:0, bottom:0},//if needed to add top offset example fixed header
-				animationspeed: 1000,
+				scrolloffset: {top:0, bottom:0},//if needed to add offset, for example for fixed header and footer
+				animationspeed: 300,
 				thumbscaled: true,//use thumbs as background-images
                 //keepzoom: true,//keep zoom setting, not yet implemented
-                //showintro: true,//Boolean, animate photos in, if this is used the element has to have class="sampgallery" added in markup
+                showintro: false,//Boolean, animate photos in, if this is used the element has to have class="sampgallery" added in markup
 				afterinit: function(){
 					//console.log('Broom.');//function to do after init
 				}
