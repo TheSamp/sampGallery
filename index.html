@@ -62,27 +62,13 @@
             <a href="pictures/full-size/9.jpg" target="_blank" data-fullsize="pictures/full-size/9.jpg" data-thumb="pictures/9.jpg"><img src="pictures/9.jpg" /></a>
             <a href="pictures/full-size/10.jpg" target="_blank" data-fullsize="pictures/full-size/10.jpg" data-thumb="pictures/10.jpg"><img src="pictures/10.jpg" /></a>
         </div>
-        <hr>
-        <div id="gallery4">
-            <a href="pictures/full-size/1.jpg" target="_blank" data-fullsize="pictures/full-size/1.jpg" data-thumb="pictures/1.jpg"><img src="pictures/1.jpg" /></a>
-            <a href="pictures/full-size/2.jpg" target="_blank" data-fullsize="pictures/full-size/2.jpg" data-thumb="pictures/2.jpg"><img src="pictures/2.jpg" /></a>
-            <a href="pictures/full-size/3.jpg" target="_blank" data-fullsize="pictures/full-size/3.jpg" data-thumb="pictures/3.jpg"><img src="pictures/3.jpg" /></a>
-            <a href="pictures/full-size/4.jpg" target="_blank" data-fullsize="pictures/full-size/4.jpg" data-thumb="pictures/4.jpg"><img src="pictures/4.jpg" /></a>
-            <a href="pictures/full-size/5.jpg" target="_blank" data-fullsize="pictures/full-size/5.jpg" data-thumb="pictures/5.jpg"><img src="pictures/5.jpg" /></a>
-            <a href="pictures/full-size/6.jpg" target="_blank" data-fullsize="pictures/full-size/6.jpg" data-thumb="pictures/6.jpg"><img src="pictures/6.jpg" /></a>
-            <a href="pictures/full-size/7.jpg" target="_blank" data-fullsize="pictures/full-size/7.jpg" data-thumb="pictures/7.jpg"><img src="pictures/7.jpg" /></a>
-            <a href="pictures/full-size/8.jpg" target="_blank" data-fullsize="pictures/full-size/8.jpg" data-thumb="pictures/8.jpg"><img src="pictures/8.jpg" /></a>
-            <a href="pictures/full-size/9.jpg" target="_blank" data-fullsize="pictures/full-size/9.jpg" data-thumb="pictures/9.jpg"><img src="pictures/9.jpg" /></a>
-            <a href="pictures/full-size/10.jpg" target="_blank" data-fullsize="pictures/full-size/10.jpg" data-thumb="pictures/10.jpg"><img src="pictures/10.jpg" /></a>
-        </div>
     </div>
     <script type="text/javascript" src="libs/jquery-2.1.1.js"></script>
     <script type="text/javascript" src="sampgallery.js"></script>
     <script type="text/javascript">
-            jQuery('#gallery').sampGallery({showintro: true, afterinit: function(){console.log(this);}});
-            jQuery('#gallery2').sampGallery({showintro: false, afterinit: function(){console.log(this);}});
-            jQuery('#gallery3').sampGallery({showintro: false, afterinit: function(){console.log(this);}});
-            jQuery('#gallery4').sampGallery({showintro: false, afterinit: function(){console.log(this);}});
+            jQuery('#gallery').sampGallery({showintro: true});
+            jQuery('#gallery2').sampGallery();
+            jQuery('#gallery3').sampGallery();
     </script>
 </body>
 </html>

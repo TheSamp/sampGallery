@@ -5,7 +5,7 @@
 		
 		_sampGallery = function(elem){		
 
-			var _self = this,  _curItemOffset = {top:-1, left:-1}, _curThbDims = {'w':0,'h':0}, _curImgDims = {'w':0,'h':0}, _curPreviewDims = {'w':0,'h':0}, _curElemDims = {'w':jQuery(elem).outerWidth(),'h':jQuery(elem).outerHeight()};//store current thumb offset
+			var _self = this, _scrSizes = {'xs':480, 'sm':767, 'md': 768},  _curItemOffset = {top:-1, left:-1}, _curThbDims = {'w':0,'h':0}, _curImgDims = {'w':0,'h':0}, _curPreviewDims = {'w':0,'h':0}, _curElemDims = {'w':jQuery(elem).outerWidth(),'h':jQuery(elem).outerHeight()};//store current thumb offset
 
             function realImgDimension(img) {
                 var i = new Image();
@@ -19,7 +19,13 @@
             function doScroll(item){
                 var itemOffset = jQuery(item).offset();
                     if(settings.scrolltoitem ){
-                            jQuery('html, body').stop().animate({scrollTop: itemOffset.top-settings.scrolloffset.top+'px'}, settings.animationspeed);
+                        var scrlTo = itemOffset.top-settings.scrolloffset.top;
+
+                            if(_curElemDims.w < _scrSizes.sm){
+                                scrlTo = itemOffset.top+((jQuery(item).height()/4)*3);//leave 1/4 of thumb visible
+                            }
+
+                            jQuery('html, body').stop().animate({scrollTop: scrlTo+'px'}, settings.animationspeed);
                         _curItemOffset = itemOffset;
                     }
             }
@@ -142,7 +148,18 @@
                 });
 
                 function previewFit(cb,args){
+
                     var previewDims = {'w':jQuery(elem).outerWidth(),'h':jQuery(window).height()-_curThbDims.h-settings.scrolloffset.top-settings.scrolloffset.bottom};
+
+                        if(_curElemDims.w < _scrSizes.sm){
+                            previewDims = {'w':jQuery(elem).outerWidth(),'h':(jQuery(window).height()-(_curThbDims.h*0.25))};//minus 1/4 of thumb height
+                        }
+
+                        if(_curElemDims.w < _scrSizes.xs){
+                            previewDims = {'w':jQuery(elem).outerWidth(),'h':(jQuery(window).height()-_curThbDims.h/2)};
+                        }
+
+
                     _curPreviewDims = previewDims;
                     var toHeight = previewDims.h;
                     var prv = jQuery(elem).find('.sampgallery-preview');
@@ -150,14 +167,15 @@
 
                         if(toHeight > ith) toHeight = ith;
 
-                        if(toHeight < ith && args !== 'zoomout'){
-                            prv.find('.sampgallery-ctrls .sampgallery-ctrl-zoomin').css('display','block');
+                        if(toHeight < ith && args !== 'zoomout' && (_curPreviewDims.w > _scrSizes.sm)){
+                                prv.find('.sampgallery-ctrls .sampgallery-ctrl-zoomin').css('display','block');
                         }
                         //prv.find('a > img').attr('style', 'max-width:'+(maxPcs.w*100)+'%;max-height:'+(maxPcs.h*100)+'%');
                         prv.animate({'height':toHeight}, settings.animationspeed, function(){
                                 jQuery(elem+' .sampgallery-thumb').removeClass('sampgallery-loading');
                                 if(typeof cb === 'function') cb(args);
                         });
+
                 }
 
                 function previewZoomin(cb,args){
@@ -167,7 +185,6 @@
                     var zD = scaledDims;
                         //prv.find('a > img').removeAttr('style');
                     var isHorizontal = true;
-                    var ith = (prv.outerHeight()-prv.height())+parseInt(_curImgDims.h);
 
                         if(_curImgDims.w <= _curImgDims.h) isHorizontal = false;
 
@@ -197,8 +214,10 @@
                     evt.preventDefault();
                     var zi = jQuery(this);
                     previewZoomin(function(){
-                            jQuery(elem).find('.sampgallery-ctrls .sampgallery-ctrl').css('display','block');
-                            zi.hide();
+                            if(_curPreviewDims.w > _scrSizes.sm){
+                                    jQuery(elem).find('.sampgallery-ctrls .sampgallery-ctrl').css('display','block');
+                                zi.hide();
+                            }
                     }, null);
                 });
 
@@ -206,8 +225,10 @@
                     evt.preventDefault();
                     var zo = jQuery(this);
                     previewFit(function(){
-                            jQuery(elem).find('.sampgallery-ctrls .sampgallery-ctrl').css('display','block');
-                            zo.hide();
+                            if(_curPreviewDims.w > _scrSizes.sm){
+                                    jQuery(elem).find('.sampgallery-ctrls .sampgallery-ctrl').css('display','block');
+                                zo.hide();
+                            }
                     }, 'zoomout');
                 });
 
@@ -269,7 +290,7 @@
 		jQuery.fn.sampGallery = function(options){			
 			settings = jQuery.extend({
 				scrolltoitem: true,//Scroll page to preview
-				scrolloffset: {top:0, bottom:0},//if needed to add offset, for example for fixed header and footer
+				scrolloffset: {top:0, bottom:0},//if needed to add offset, for example for fixed header and footer. Works only when screen is larger  than 767 pixels
 				animationspeed: 300,
 				thumbscaled: true,//use thumbs as background-images
                 //keepzoom: true,//keep zoom setting, not yet implemented
