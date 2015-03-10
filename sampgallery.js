@@ -75,7 +75,7 @@
                                             if((_curItemOffset.top === _thisOffset.top) && typeof curPreview != 'undefined' && curPreview.length > 0){
 
                                                     curPreview.prepend(buildControls(fullImgPath)).find('a').attr('href', fullImgPath).find('img').attr('src', fullImgPath);
-                                                previewFit(function(){
+                                                previewFitWindow(function(){
                                                         jQuery(_this).addClass('sampgallery-active');
                                                     doScroll(_this);
                                                 }, null);
@@ -86,7 +86,7 @@
                                                     if(typeof curPreview != 'undefined' && curPreview.length > 0){
                                                         closePreview(function(){
                                                                 jQuery(lastItem).after(oHtml);
-                                                            previewFit(function(){
+                                                            previewFitWindow(function(){
                                                                     jQuery(elem+' .sampgallery-thumb').removeClass('sampgallery-loading');
                                                                     jQuery(_this).addClass('sampgallery-active');
                                                                 doScroll(_this);
@@ -94,7 +94,7 @@
                                                         }, null);
                                                     }else{
                                                             jQuery(lastItem).after(oHtml);
-                                                        previewFit(function(){
+                                                        previewFitWindow(function(){
                                                                 jQuery(elem+' .sampgallery-thumb').removeClass('sampgallery-loading');
                                                                 jQuery(_this).addClass('sampgallery-active');
                                                             doScroll(_this);
@@ -147,68 +147,74 @@
                     closePreview(null, null);
                 });
 
-                function previewFit(cb,args){
 
-                    var previewDims = {'w':jQuery(elem).outerWidth(),'h':jQuery(window).height()-_curThbDims.h-settings.scrolloffset.top-settings.scrolloffset.bottom};
+            function  ctrlHandler(type){
 
-                        if(_curElemDims.w < _scrSizes.sm){
-                            previewDims = {'w':jQuery(elem).outerWidth(),'h':(jQuery(window).height()-(_curThbDims.h*0.25))};//minus 1/4 of thumb height
+                var tC = jQuery(elem).find('.sampgallery-preview').find('.sampgallery-ctrls');
+
+                    tC.find('.sampgallery-ctrl-zoomin, .sampgallery-ctrl-zoomout').css('display','none');
+
+                    if(_curPreviewDims.w > _scrSizes.sm){
+                        if(_curImgDims.h > _curPreviewDims.h){
+                                tC.find('.sampgallery-ctrl-zoomin').css('display','block');
+                        }else if(_curImgDims.h < _curPreviewDims.h){
+                                //tC.find('.sampgallery-ctrl-zoomout').css('display','block');
                         }
-
-                        if(_curElemDims.w < _scrSizes.xs){
-                            previewDims = {'w':jQuery(elem).outerWidth(),'h':(jQuery(window).height()-_curThbDims.h/2)};
-                        }
+                    }
+            }
 
 
-                    _curPreviewDims = previewDims;
-                    var toHeight = previewDims.h;
-                    var prv = jQuery(elem).find('.sampgallery-preview');
-                    var ith = (prv.outerHeight()-prv.height())+parseInt(_curImgDims.h);
+            function previewFitWindow(cb,args){
 
-                        if(toHeight > ith) toHeight = ith;
+                var toHeight = calcFitWindow()['h'];
 
-                        if(toHeight < ith && args !== 'zoomout' && (_curPreviewDims.w > _scrSizes.sm)){
-                                prv.find('.sampgallery-ctrls .sampgallery-ctrl-zoomin').css('display','block');
-                        }
-                        //prv.find('a > img').attr('style', 'max-width:'+(maxPcs.w*100)+'%;max-height:'+(maxPcs.h*100)+'%');
-                        prv.animate({'height':toHeight}, settings.animationspeed, function(){
-                                jQuery(elem+' .sampgallery-thumb').removeClass('sampgallery-loading');
-                                if(typeof cb === 'function') cb(args);
-                        });
+                    if(_curElemDims.w < _scrSizes.sm){
+                        toHeight = calcFitPreviewer()['h'];
+                    }
 
-                }
+                    jQuery(elem).find('.sampgallery-preview').animate({'height': toHeight}, settings.animationspeed, function(){
+                            jQuery(elem+' .sampgallery-thumb').removeClass('sampgallery-loading');
+                        ctrlHandler('zoomin');
+                            if(typeof cb === 'function') cb(args);
+                    });
+            }
 
-                function previewZoomin(cb,args){
-                    var prv = jQuery(elem).find('.sampgallery-preview');
-                    var prvImg = prv.find('a > img');
-                    var scaledDims = {'w': prvImg.width(),'h':prvImg.height()};
-                    var zD = scaledDims;
-                        //prv.find('a > img').removeAttr('style');
-                    var isHorizontal = true;
 
-                        if(_curImgDims.w <= _curImgDims.h) isHorizontal = false;
+            function previewZoomin(cb,args){
+                    jQuery(elem).find('.sampgallery-preview').animate({'height': calcFitPreviewer()['h']}, settings.animationspeed, function(){
+                        ctrlHandler('zoomout');
+                            if(typeof cb === 'function') cb(args);
+                    });
+            }
 
-                    var pad = parseInt(prv.outerHeight()-prv.height());
-                    var rat = (_curElemDims.w-pad)/scaledDims.w;
-                    zD.h = Math.round(scaledDims.h*rat)+pad;
 
-                        if(!isHorizontal){
-                            rat = _curImgDims.h/scaledDims.h;
-                            zD.w = (_curElemDims.w-pad);
+            function calcFitWindow(){
+                var previewDims = {'w':jQuery(elem).outerWidth(),'h':jQuery(window).height()-_curThbDims.h-settings.scrolloffset.top-settings.scrolloffset.bottom};
+                _curPreviewDims = previewDims;
+                var prv = jQuery(elem).find('.sampgallery-preview');
+                var ith = (prv.outerHeight()-prv.height())+parseInt(_curImgDims.h);
+                var fD = {'w': previewDims.w, 'h': previewDims.h};
+                    if(fD.h > ith) fD.h = ith;
+                    //prv.find('a > img').attr('style', 'max-width:'+(maxPcs.w*100)+'%;max-height:'+(maxPcs.h*100)+'%');
+                return fD;
+            }
 
-                                if(zD.w < _curImgDims.w){
-                                    rat = zD.w/scaledDims.w;
-                                }
 
-                            zD.h = (scaledDims.h*rat);
-                        }else if(_curImgDims.w == _curImgDims.h){
-                            console.log('were fucked');
-                        }
+            function calcFitPreviewer(){
+                var prv = jQuery(elem).find('.sampgallery-preview');
+                var pad = parseInt(prv.outerHeight()-prv.height());
+                var rat = _curImgDims.w/(_curElemDims.w-pad);
+                var zD = {'w': prv.outerWidth()};
 
-                        prv.animate({'height':zD.h}, settings.animationspeed, function(){
-                                if(typeof cb === 'function') cb(args);
-                        });
-                }
+                    if(_curImgDims.w > _curElemDims.w-pad) zD.w = _curElemDims.w-pad;
+
+                    if(zD.w > _curImgDims.w) zD.w = _curImgDims.w;
+
+                    if(_curImgDims.w === _curImgDims.h) rat = 1;//Not a mathematician so dunno why square images go weird
+
+                zD.h = (_curImgDims.h/rat)+pad;
+                return zD;
+            }
 
                 jQuery(elem).on('click', '.sampgallery-ctrl-zoomin', function(evt){
                     evt.preventDefault();
@@ -224,7 +230,7 @@
                 jQuery(elem).on('click', '.sampgallery-ctrl-zoomout', function(evt){
                     evt.preventDefault();
                     var zo = jQuery(this);
-                    previewFit(function(){
+                    previewFitWindow(function(){
                             if(_curPreviewDims.w > _scrSizes.sm){
                                     jQuery(elem).find('.sampgallery-ctrls .sampgallery-ctrl').css('display','block');
                                 zo.hide();
