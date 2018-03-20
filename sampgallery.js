@@ -306,9 +306,9 @@
 				}
 			}, options);
 				
-			var selected = this;
-			_setupSampGallery(selected.selector);
-			return _sampGallery(this.selector);
+			var _tselector = (typeof($(this).attr('id')) !== 'undefined' || $(this).attr('id') !== null) ? '#' + $(this).attr('id') :  '.' + $(this).attr('class');
+			_setupSampGallery(_tselector);
+			return _sampGallery(_tselector);
 		};		
 		/*jQuery.fn.sampGallery.defaults = {}; default options end */
 })($);
