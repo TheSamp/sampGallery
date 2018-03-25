@@ -46,6 +46,7 @@
                 _curThbDims.w = jQuery(_this).outerWidth();
                 _curThbDims.h = jQuery(_this).outerHeight();
                 jQuery(_this).addClass('sampgallery-loading');
+                jQuery(elem+' .sampgallery-preview .sampgallery-caption').remove();
                 var _thisOffset = jQuery(_this).offset();
                 var prevItem = jQuery(elem).children().first();
                 var cLast = jQuery(elem+' .sampgallery-thumb').last();
@@ -68,13 +69,19 @@
 
                                         var lastItem = prevItem;
 
+                                        var _thisCaption = null;
+                                            if(jQuery(_this).find('.sampgallery-caption').length > 0) _thisCaption = jQuery(_this).find('.sampgallery-caption')[0].outerHTML;
+                                        console.log(_thisCaption);
+
                                             if( _thisOffset.top == lastOffset.top){
                                                 lastItem = cLast;
                                             }
 
                                             if((_curItemOffset.top === _thisOffset.top) && typeof curPreview != 'undefined' && curPreview.length > 0){
 
-                                                    curPreview.prepend(buildControls(fullImgPath)).find('a').attr('href', fullImgPath).find('img').attr('src', fullImgPath);
+                                                    if(_thisCaption) curPreview.prepend(_thisCaption);
+                                                curPreview.prepend(buildControls(fullImgPath)).find('a').attr('href', fullImgPath).find('img').attr('src', fullImgPath);
+
                                                 previewFitWindow(function(){
                                                         jQuery(_this).addClass('sampgallery-active');
                                                     doScroll(_this);
@@ -82,7 +89,9 @@
 
                                             }else{
 
-                                                var oHtml = '<div class="sampgallery-preview">'+buildControls(fullImgPath)+'<a href="'+fullImgPath+'" target="_blank"><img src="'+fullImgPath+'"></a></div>';
+                                                var oHtml = '<div class="sampgallery-preview">'+buildControls(fullImgPath)+'<a href="'+fullImgPath+'" target="_blank"><img src="'+fullImgPath+'"></a>';
+                                                    if(_thisCaption) oHtml += _thisCaption;
+                                                oHtml += '</div>';
                                                     if(typeof curPreview != 'undefined' && curPreview.length > 0){
                                                         closePreview(function(){
                                                                 jQuery(lastItem).after(oHtml);
@@ -259,17 +268,6 @@
 		
 		function _setupSampGallery(elem){
 				jQuery(elem).addClass('sampgallery').show().children().each(function(i, item){
-					/*vanilla js
-					var t_img = item.firstChild.src;
-						
-						if(typeof item.getAttribute('data-thumb') !== 'undefined') t_img = item.getAttribute('data-thumb');					
-					item.firstChild.src = t_img;
-					
-						if(settings.thumbscaled){
-							item.firstChild.remove();
-								jQuery(item).css({'background-image':'url('+t_img+')'});
-						}
-					*/
 
                         if(settings.showintro){
                                 jQuery(item).addClass('sampgallery-thumb sampgallery-thumb-intro').delay(i*250).animate({'opacity':1}, settings.animationspeed, function(){
@@ -285,7 +283,7 @@
 					jQuery(item).attr('src', t_img);
 					
 						if(settings.thumbscaled){
-							jQuery(item).find('img').first().remove();
+							    jQuery(item).find('img').first().remove();
 								jQuery(item).css({'background-image':'url('+t_img+')'});
 						}
 						
