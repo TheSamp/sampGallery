@@ -270,7 +270,7 @@
 				jQuery(elem).addClass('sampgallery').show().children().each(function(i, item){
 
                         if(settings.showintro){
-                                jQuery(item).addClass('sampgallery-thumb sampgallery-thumb-intro').delay(i*250).animate({'opacity':1}, settings.animationspeed, function(){
+                                jQuery(item).addClass('sampgallery-thumb sampgallery-thumb-intro').delay(i*settings.animationspeed/2).queue().animate({'opacity':1}, settings.animationspeed/2, function(){
                                          jQuery(item).removeClass('sampgallery-thumb-intro');
                                 });
                         }else{
