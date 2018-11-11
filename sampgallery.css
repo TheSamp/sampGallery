@@ -1,7 +1,7 @@
 .sampgallery{
     /*font-size: 0;removes margin between inline-blocks*/
     overflow: hidden;
-    min-height: 100%;
+    /*min-height: 100%;*/
     clear: both;
     float:none;
     display:none;

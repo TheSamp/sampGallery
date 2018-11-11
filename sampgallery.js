@@ -70,8 +70,8 @@
                                         var lastItem = prevItem;
 
                                         var _thisCaption = null;
+
                                             if(jQuery(_this).find('.sampgallery-caption').length > 0) _thisCaption = jQuery(_this).find('.sampgallery-caption')[0].outerHTML;
-                                        console.log(_thisCaption);
 
                                             if( _thisOffset.top == lastOffset.top){
                                                 lastItem = cLast;
